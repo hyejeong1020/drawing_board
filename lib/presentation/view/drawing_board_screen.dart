@@ -1,24 +1,24 @@
+import 'package:drawing_board/presentation/view/component/drawing_painter.dart';
 import 'package:drawing_board/presentation/view_model/drawing_view_model.dart';
 import 'package:drawing_board/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class DrawingBoardScreen extends StatefulWidget {
-  final DrawingViewModel drawingViewModel;
-
-  const DrawingBoardScreen({super.key, required this.drawingViewModel});
+  const DrawingBoardScreen({super.key});
 
   @override
   State<DrawingBoardScreen> createState() => _DrawingBoardScreenState();
 }
 
 class _DrawingBoardScreenState extends State<DrawingBoardScreen> {
+  final DrawingViewModel drawingViewModel = DrawingViewModel();
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
-      widget.drawingViewModel.addListener(updateScreen);
+      drawingViewModel.addListener(updateScreen);
     });
   }
 
@@ -41,12 +41,14 @@ class _DrawingBoardScreenState extends State<DrawingBoardScreen> {
         ),
         body: LayoutBuilder(
           builder: (context, constraints) => GestureDetector(
-            onPanUpdate: (details) {
-
-            },
+            onPanUpdate: (details) => drawingViewModel.onPanUpdate(context: context, details: details),
             onPanEnd: (details) {
-
+              drawingViewModel.stroke.add(null);
             },
+            child: CustomPaint(
+              painter: DrawingPainter(strokes: drawingViewModel.stroke),
+              size: Size(constraints.maxWidth, constraints.maxHeight),
+            ),
           ),
         ),
         bottomNavigationBar: BottomAppBar(
@@ -63,7 +65,7 @@ class _DrawingBoardScreenState extends State<DrawingBoardScreen> {
                         height: 30,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: widget.drawingViewModel.selectedColor
+                          color: drawingViewModel.selectedColor
                         ),
                       ),
                       15.sbW,
@@ -71,7 +73,6 @@ class _DrawingBoardScreenState extends State<DrawingBoardScreen> {
                     ],
                   ),
                 ),
-
               ],
             ),
           ),

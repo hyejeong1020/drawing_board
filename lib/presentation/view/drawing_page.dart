@@ -187,7 +187,10 @@ class _DrawingPageState extends State<DrawingPage> {
                     Container(
                       width: 45,
                       height: 45,
-                      color: selectedColor,
+                      decoration: BoxDecoration(
+                        color: selectedColor,
+                        shape: BoxShape.circle
+                      ),
                     ),
                     15.sbW,
                     Text('색상 선택', style: textTheme(context).bodySmall),
@@ -299,3 +302,4 @@ class ColorPickerButton extends StatelessWidget {
     );
   }
 }
+

@@ -1,8 +1,4 @@
-import 'package:drawing_board/presentation/view/color_picker_screen.dart';
-import 'package:drawing_board/presentation/view/drawing_boaed_screen.dart';
-import 'package:drawing_board/presentation/view/drawing_remover.dart';
-import 'package:drawing_board/presentation/view/drawing_page.dart';
-import 'package:drawing_board/presentation/view_model/drawing_view_model.dart';
+import 'package:drawing_board/presentation/view/drawing_board_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,8 +10,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DrawingViewModel drawingViewModel = DrawingViewModel();
-
     return MaterialApp(
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
@@ -29,7 +23,7 @@ class MyApp extends StatelessWidget {
         bottomAppBarTheme: BottomAppBarTheme(color: Colors.white)
       ),
       debugShowCheckedModeBanner: false,
-      home: DrawingBoardScreen(drawingViewModel: drawingViewModel),
+      home: DrawingBoardScreen(),
     );
   }
 }

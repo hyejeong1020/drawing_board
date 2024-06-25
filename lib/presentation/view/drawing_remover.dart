@@ -130,3 +130,155 @@ class DrawingPainter extends CustomPainter {
     return true;
   }
 }
+
+
+class DrawingPoint {
+  final Offset offset;
+  final Color color;
+  final double strokeWidth;
+
+  DrawingPoint({
+    required this.offset,
+    required this.color,
+    required this.strokeWidth,
+  });
+}
+
+class DrawingPage2 extends StatefulWidget {
+  const DrawingPage2({super.key});
+
+  @override
+  _DrawingPage2State createState() => _DrawingPage2State();
+}
+
+class _DrawingPage2State extends State<DrawingPage2> {
+  List<DrawingPoint?> points = [];
+  List<DrawingPoint?> undoStack = [];
+  Color selectedColor = Colors.black;
+  double strokeWidth = 5.0;
+  ui.Image? backgroundImage;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Drawing App'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.undo),
+              onPressed: _undo,
+            ),
+          ],
+        ),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return GestureDetector(
+              onPanUpdate: (details) {
+                RenderBox renderBox = context.findRenderObject() as RenderBox;
+                setState(() {
+                  points.add(
+                    DrawingPoint(
+                      offset: renderBox.globalToLocal(details.globalPosition),
+                      color: selectedColor,
+                      strokeWidth: strokeWidth,
+                    ),
+                  );
+                });
+              },
+              onPanEnd: (details) {
+                points.add(null);
+              },
+              child: CustomPaint(
+                painter: DrawingPainter2(points, backgroundImage),
+                size: Size(constraints.maxWidth, constraints.maxHeight),
+              ),
+            );
+          },
+        ),
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              GestureDetector(
+                onTap: () => _openColorPicker(context),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 45,
+                      height: 45,
+                      decoration: BoxDecoration(
+                          color: selectedColor,
+                          shape: BoxShape.circle
+                      ),
+                    ),
+                    SizedBox(width: 15),
+                    Text('색상 선택', style: Theme.of(context).textTheme.bodyMedium),
+                  ],
+                ),
+              ),
+              Slider(
+                min: 1.0,
+                max: 10.0,
+                value: strokeWidth,
+                onChanged: (value) {
+                  setState(() {
+                    strokeWidth = value;
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _undo() {
+    setState(() {
+      if (points.isNotEmpty) {
+        undoStack.add(points.removeLast());
+        while (points.isNotEmpty && points.last != null) {
+          undoStack.add(points.removeLast());
+        }
+        if (points.isNotEmpty) {
+          undoStack.add(points.removeLast());
+        }
+      }
+    });
+  }
+
+  void _openColorPicker(BuildContext context) {
+    // 색상 선택 로직을 구현하세요.
+  }
+}
+
+class DrawingPainter2 extends CustomPainter {
+  final List<DrawingPoint?> points;
+  final ui.Image? backgroundImage;
+
+  DrawingPainter2(this.points, this.backgroundImage);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (backgroundImage != null) {
+      canvas.drawImage(backgroundImage!, Offset.zero, Paint());
+    }
+
+    for (int i = 0; i < points.length - 1; i++) {
+      if (points[i] != null && points[i + 1] != null) {
+        final paint = Paint()
+          ..color = points[i]!.color
+          ..strokeCap = StrokeCap.round
+          ..strokeWidth = points[i]!.strokeWidth;
+        canvas.drawLine(points[i]!.offset, points[i + 1]!.offset, paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
