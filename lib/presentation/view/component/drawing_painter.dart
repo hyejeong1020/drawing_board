@@ -11,15 +11,16 @@ class DrawingPoint {
 
 class DrawingPainter extends CustomPainter {
   final List<DrawingPoint?> strokes;
-  final ui.Image? backgroundImage;
+  final bool isErasing;
+  // final ui.Image? backgroundImage;
 
-  DrawingPainter({required this.strokes, this.backgroundImage});
+  DrawingPainter({super.repaint, required this.strokes, required this.isErasing});
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (backgroundImage != null) {
-      canvas.drawImage(backgroundImage!, Offset.zero, Paint());
-    }
+    // if (backgroundImage != null) {
+    //   canvas.drawImage(backgroundImage!, Offset.zero, Paint());
+    // }
 
     for (int i = 0; i < strokes.length - 1; i++) {
       if (strokes[i] != null && strokes[i + 1] != null) {
