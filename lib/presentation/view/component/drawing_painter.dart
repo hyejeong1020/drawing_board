@@ -1,3 +1,4 @@
+import 'package:drawing_board/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
@@ -12,15 +13,20 @@ class DrawingPoint {
 class DrawingPainter extends CustomPainter {
   final List<DrawingPoint?> strokes;
   final bool isErasing;
-  // final ui.Image? backgroundImage;
+  final ui.Image? backgroundImage;
+  final BoxConstraints constraints;
 
-  DrawingPainter({super.repaint, required this.strokes, required this.isErasing});
+  DrawingPainter(this.backgroundImage, {super.repaint, required this.strokes, required this.isErasing, required this.constraints});
 
   @override
   void paint(Canvas canvas, Size size) {
-    // if (backgroundImage != null) {
-    //   canvas.drawImage(backgroundImage!, Offset.zero, Paint());
-    // }
+    if (backgroundImage != null) {
+      final paint = Paint();
+      final src = Rect.fromLTWH(0, 0, backgroundImage!.width.toDouble(), backgroundImage!.height.toDouble());
+      final dst = Rect.fromLTWH(0, 0, constraints.maxWidth, 550);
+
+      canvas.drawImageRect(backgroundImage!, src, dst, paint);
+    }
 
     for (int i = 0; i < strokes.length - 1; i++) {
       if (strokes[i] != null && strokes[i + 1] != null) {
