@@ -116,103 +116,120 @@ class _DrawingBoardScreenState extends State<DrawingBoardScreen> {
         body: LayoutBuilder(
           builder: (context, constraints) => Column(
             children: [
-              GestureDetector(
-                onPanUpdate: (details) => drawingViewModel.onPanUpdate(context: context, details: details),
-                onPanEnd: (details) => drawingViewModel.stroke.add(null),
-                child: CustomPaint(
-                  painter: DrawingPainter(
-                    drawingViewModel.selectedImage,
-                    strokes: drawingViewModel.stroke,
-                    isErasing: drawingViewModel.isErasing,
-                    constraints: constraints,
+              SizedBox(
+                width: constraints.maxWidth,
+                height: 550,
+                child: GestureDetector(
+                  onPanUpdate: (details) => drawingViewModel.onPanUpdate(context: context, details: details),
+                  onPanEnd: (details) => drawingViewModel.stroke.add(null),
+                  child: CustomPaint(
+                    painter: DrawingPainter(
+                      drawingViewModel.selectedImage,
+                      strokes: drawingViewModel.stroke,
+                      constraints: constraints,
+                    ),
+                    size: Size(constraints.maxWidth, 550),
+                    child: Container(decoration: BoxDecoration(border: Border.all(width: 2, color: Colors.black)),),
                   ),
-                  size: Size(constraints.maxWidth, constraints.maxHeight - 50),
                 ),
               ),
               Container(
-                width: constraints.maxWidth,
-                height: 50,
-                decoration: BoxDecoration(borderRadius: BorderRadius.vertical(bottom: Radius.circular(15))),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(onPressed: () =>  drawingViewModel.saveImage(context: context, constraints: constraints), icon: Icon(Icons.save)),
-                      IconButton(onPressed: () => drawingViewModel.pickImage(ImageSource.gallery), icon: Icon(Icons.photo_library)),
-                      IconButton(onPressed: drawingViewModel.undo, icon: Icon(Icons.undo)),
-                      IconButton(onPressed: drawingViewModel.clearDrawing, icon: Icon(Icons.delete)),
-                    ],
-                  ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: drawingViewModel.drawingSelected,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: drawingViewModel.isSelected
+                                  ? Colors.blueGrey.withOpacity(0.1)
+                                  : null,
+                            ),
+                            child: Icon(Icons.how_to_vote),
+                            width: 50,
+                            height: 50,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            drawingViewModel.isSelected ? drawingViewModel.drawingSelected() : _openThickness(context: context);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: drawingViewModel.isSelected
+                                  ? null
+                                  : Colors.blueGrey.withOpacity(0.1),
+                            ),
+                            child: Icon(Icons.brush),
+                            width: 50,
+                            height: 50,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => _openColorPicker(context: context),
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.palette,
+                              color: drawingViewModel.selectedColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+
+                      ],
+                    )
+                  ],
                 ),
               ),
+              // Container(
+              //   width: constraints.maxWidth,
+              //   height: 50,
+              //   decoration: BoxDecoration(borderRadius: BorderRadius.vertical(bottom: Radius.circular(15))),
+              //   child: Padding(
+              //     padding: const EdgeInsets.symmetric(horizontal: 15),
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       crossAxisAlignment: CrossAxisAlignment.center,
+              //       children: [
+              //         IconButton(onPressed: () =>  drawingViewModel.saveImage(context: context, constraints: constraints), icon: Icon(Icons.save)),
+              //         IconButton(onPressed: () => drawingViewModel.pickImage(ImageSource.gallery), icon: Icon(Icons.photo_library)),
+              //         IconButton(onPressed: drawingViewModel.undo, icon: Icon(Icons.undo)),
+              //         IconButton(onPressed: drawingViewModel.clearDrawing, icon: Icon(Icons.delete)),
+              //       ],
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
-        bottomNavigationBar: ClipRRect(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-          child: BottomAppBar(
-            height: 65,
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () => _openThickness(context: context),
-                  child: drawingViewModel.isBrush
-                      ? Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.blueGrey.withOpacity(0.1),
-                          ),
-                          child: Icon(Icons.brush),
-                          width: 50,
-                          height: 50,
-                        )
-                      : Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(Icons.brush),
-                          width: 50,
-                          height: 50,
-                        ),
-                ),
-                10.sbW,
-                GestureDetector(
-                  onTap: drawingViewModel.eraserDrawing,
-                  child: drawingViewModel.isErasing
-                      ? Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.blueGrey.withOpacity(0.1),
-                          ),
-                          child: Icon(Icons.how_to_vote),
-                          width: 50,
-                          height: 50,
-                        )
-                      : Container(
-                          decoration: BoxDecoration(shape: BoxShape.circle),
-                          child: Icon(Icons.how_to_vote),
-                          width: 50,
-                          height: 50,
-                        ),
-                ),
-                Spacer(),
-                GestureDetector(
-                  onTap: () => _openColorPicker(context: context),
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.palette, color: drawingViewModel.selectedColor,),
-                  ),
-                ),
-              ],
-            ),
-          ),
+      ),
+    );
+  }
+
+  Widget _iconBtn({required Icon icon, required Color backgroundColor, required void Function() onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: backgroundColor
         ),
+        width: 50,
+        height: 50,
+        child: icon,
       ),
     );
   }

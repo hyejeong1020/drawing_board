@@ -22,22 +22,25 @@ class DrawingViewModel extends ChangeNotifier {
   List<DrawingPoint?> currentStroke = [];
   List<double> brushList = [1.0, 3.0, 5.0, 10.0, 15.0, 20.0];
   double strokeWidth = 5.0;
-  bool isErasing = false;
-  bool isBrush = true;
+  bool isSelected = false;
 
   final ImagePicker imagePicker = ImagePicker();
   ui.Image? selectedImage;
 
   Future<void> onPanUpdate({required BuildContext context, required DragUpdateDetails details}) async {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
-    stroke.add(
-      DrawingPoint(
-        offset: renderBox.globalToLocal(details.globalPosition),
-        color: selectedColor,
-        strokeWidth: strokeWidth,
-      ),
-    );
-    notifyListeners();
+    Offset localPosition = renderBox.globalToLocal(details.globalPosition);
+
+    if (localPosition.dy <= 550) {
+      stroke.add(
+        DrawingPoint(
+          offset: renderBox.globalToLocal(details.globalPosition),
+          color: isSelected ? Colors.white : selectedColor,
+          strokeWidth: strokeWidth,
+        ),
+      );
+      notifyListeners();
+    }
   }
 
   Future<void> undo() async {
@@ -60,9 +63,8 @@ class DrawingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> eraserDrawing() async {
-    isBrush = !isBrush;
-    isErasing = !isErasing;
+  Future<void> drawingSelected() async {
+    isSelected = !isSelected;
     notifyListeners();
   }
 

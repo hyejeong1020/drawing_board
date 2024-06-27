@@ -12,11 +12,10 @@ class DrawingPoint {
 
 class DrawingPainter extends CustomPainter {
   final List<DrawingPoint?> strokes;
-  final bool isErasing;
   final ui.Image? backgroundImage;
   final BoxConstraints constraints;
 
-  DrawingPainter(this.backgroundImage, {super.repaint, required this.strokes, required this.isErasing, required this.constraints});
+  DrawingPainter(this.backgroundImage, {super.repaint, required this.strokes, required this.constraints});
 
   @override
   void paint(Canvas canvas, Size size) {
