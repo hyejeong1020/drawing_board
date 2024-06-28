@@ -1,0 +1,179 @@
+Index: lib/presentation/view/drawing_board_screen.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/presentation/view/drawing_board_screen.dart b/lib/presentation/view/drawing_board_screen.dart
+--- a/lib/presentation/view/drawing_board_screen.dart	(revision ae13cea3800cc0a509fb0914a425c0bcafabc766)
++++ b/lib/presentation/view/drawing_board_screen.dart	(date 1719554384298)
+@@ -8,6 +8,8 @@
+ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+ import 'package:image_picker/image_picker.dart';
+ 
++import 'component/button_widget.dart';
++
+ class DrawingBoardScreen extends StatefulWidget {
+   const DrawingBoardScreen({super.key});
+ 
+@@ -116,101 +118,74 @@
+         body: LayoutBuilder(
+           builder: (context, constraints) => Column(
+             children: [
+-              GestureDetector(
+-                onPanUpdate: (details) => drawingViewModel.onPanUpdate(context: context, details: details),
+-                onPanEnd: (details) => drawingViewModel.stroke.add(null),
+-                child: CustomPaint(
+-                  painter: DrawingPainter(
+-                    drawingViewModel.selectedImage,
+-                    strokes: drawingViewModel.stroke,
+-                    isErasing: drawingViewModel.isErasing,
+-                    constraints: constraints,
++              SizedBox(
++                width: constraints.maxWidth,
++                height: drawingViewModel.canvasHeight,
++                child: GestureDetector(
++                  onPanUpdate: (details) => drawingViewModel.onPanUpdate(context: context, details: details),
++                  onPanEnd: (details) => drawingViewModel.stroke.add(null),
++                  child: CustomPaint(
++                    painter: DrawingPainter(
++                      drawingViewModel.selectedImage,
++                      strokes: drawingViewModel.stroke,
++                      constraints: constraints,
++                      canvasHeight: drawingViewModel.canvasHeight,
++                    ),
++                    size: Size(constraints.maxWidth, drawingViewModel.canvasHeight),
++                    child: Container(decoration: BoxDecoration(border: Border.all(width: 2, color: Colors.black)),),
+                   ),
+-                  size: Size(constraints.maxWidth, constraints.maxHeight - 50),
+                 ),
+               ),
+-              Container(
+-                width: constraints.maxWidth,
+-                height: 50,
+-                decoration: BoxDecoration(borderRadius: BorderRadius.vertical(bottom: Radius.circular(15))),
+-                child: Padding(
+-                  padding: const EdgeInsets.symmetric(horizontal: 15),
+-                  child: Row(
++              Column(
++                children: [
++                  10.sbH,
++                  Row(
+                     mainAxisAlignment: MainAxisAlignment.center,
+                     crossAxisAlignment: CrossAxisAlignment.center,
+                     children: [
+-                      IconButton(onPressed: () =>  drawingViewModel.saveImage(context: context, constraints: constraints), icon: Icon(Icons.save)),
+-                      IconButton(onPressed: () => drawingViewModel.pickImage(ImageSource.gallery), icon: Icon(Icons.photo_library)),
+-                      IconButton(onPressed: drawingViewModel.undo, icon: Icon(Icons.undo)),
+-                      IconButton(onPressed: drawingViewModel.clearDrawing, icon: Icon(Icons.delete)),
+-                    ],
+-                  ),
+-                ),
+-              ),
+-            ],
+-          ),
+-        ),
+-        bottomNavigationBar: ClipRRect(
+-          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+-          child: BottomAppBar(
+-            height: 65,
+-            child: Row(
+-              children: [
+-                GestureDetector(
+-                  onTap: () => _openThickness(context: context),
+-                  child: drawingViewModel.isBrush
+-                      ? Container(
+-                          decoration: BoxDecoration(
+-                            shape: BoxShape.circle,
+-                            color: Colors.blueGrey.withOpacity(0.1),
+-                          ),
+-                          child: Icon(Icons.brush),
+-                          width: 50,
+-                          height: 50,
+-                        )
+-                      : Container(
+-                          decoration: BoxDecoration(
+-                            shape: BoxShape.circle,
+-                          ),
+-                          child: Icon(Icons.brush),
+-                          width: 50,
+-                          height: 50,
+-                        ),
+-                ),
+-                10.sbW,
+-                GestureDetector(
+-                  onTap: drawingViewModel.eraserDrawing,
+-                  child: drawingViewModel.isErasing
+-                      ? Container(
+-                          decoration: BoxDecoration(
+-                            shape: BoxShape.circle,
+-                            color: Colors.blueGrey.withOpacity(0.1),
+-                          ),
+-                          child: Icon(Icons.how_to_vote),
+-                          width: 50,
+-                          height: 50,
+-                        )
+-                      : Container(
+-                          decoration: BoxDecoration(shape: BoxShape.circle),
+-                          child: Icon(Icons.how_to_vote),
+-                          width: 50,
+-                          height: 50,
++                      iconBtn(
++                        icon: Icon(Icons.how_to_vote),
++                        backgroundColor: drawingViewModel.isSelected
++                            ? drawingViewModel.selectedColor.withOpacity(0.1)
++                            : null,
++                        onTap: drawingViewModel.drawingSelected,
++                      ),
++                      10.sbW,
++                      iconBtn(
++                        icon: Icon(Icons.brush),
++                        backgroundColor: drawingViewModel.isSelected
++                            ? null
++                            : drawingViewModel.selectedColor.withOpacity(0.1),
++                        onTap: () => drawingViewModel.isSelected
++                            ? drawingViewModel.drawingSelected()
++                            : _openThickness(context: context),
++                      ),
++                      10.sbW,
++                      iconBtn(icon: Icon(Icons.delete), backgroundColor: null, onTap: drawingViewModel.clearDrawing),
++                      10.sbW,
++                      iconBtn(
++                        icon: Icon(
++                          Icons.palette,
++                          color: drawingViewModel.selectedColor,
+                         ),
+-                ),
+-                Spacer(),
+-                GestureDetector(
+-                  onTap: () => _openColorPicker(context: context),
+-                  child: Container(
+-                    width: 30,
+-                    height: 30,
+-                    decoration: BoxDecoration(
+-                      shape: BoxShape.circle,
+-                    ),
+-                    child: Icon(Icons.palette, color: drawingViewModel.selectedColor,),
++                        backgroundColor: null,
++                        onTap: () => _openColorPicker(context: context),
++                      ),
++                    ],
+                   ),
+-                ),
+-              ],
+-            ),
++                  10.sbH,
++                  Row(
++                    mainAxisAlignment: MainAxisAlignment.center,
++                    children: [
++                      textBtn(context: context, text: 'Select Image', onTap: () => drawingViewModel.pickImage(ImageSource.gallery)),
++                      10.sbW,
++                      textBtn(context: context, text: 'Export to png', onTap: () => drawingViewModel.saveImage(context: context, constraints: constraints))
++                    ],
++                  ),
++                  10.sbH,
++                ],
++              ),
++            ],
+           ),
+         ),
+       ),

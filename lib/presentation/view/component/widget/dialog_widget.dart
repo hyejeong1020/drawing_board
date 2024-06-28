@@ -1,7 +1,7 @@
 import 'package:drawing_board/utils/utils.dart';
 import 'package:flutter/material.dart';
 
-Future showDialogWidget({required BuildContext context, required String title, required Widget content}) {
+Future showDialogWidget({required BuildContext context, required String title, required Widget? content}) {
   print('dialog');
   return showDialog(
     context: context,
