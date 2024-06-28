@@ -15,9 +15,9 @@ Future showDialogWidget({required BuildContext context, required String title, r
           child: TextButton(
             onPressed: () => Navigator.of(context).pop(),
             style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Colors.blueGrey.withOpacity(0.1)),
+              backgroundColor: WidgetStatePropertyAll(Colors.blue),
               shape: WidgetStatePropertyAll(
-                BeveledRectangleBorder(borderRadius: BorderRadius.circular(0)),
+                BeveledRectangleBorder(borderRadius: BorderRadius.circular(5)),
               ),
             ),
             child: Text('확인', style: textTheme(context).bodyMedium),

@@ -1,13 +1,8 @@
 import 'dart:io';
-import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:drawing_board/utils/utils.dart';
-import 'package:flutter/animation.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,6 +18,7 @@ class DrawingViewModel extends ChangeNotifier {
   List<double> brushList = [1.0, 3.0, 5.0, 10.0, 15.0, 20.0];
   double strokeWidth = 5.0;
   bool isSelected = false;
+  double canvasHeight = 600;
 
   final ImagePicker imagePicker = ImagePicker();
   ui.Image? selectedImage;
@@ -31,7 +27,7 @@ class DrawingViewModel extends ChangeNotifier {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     Offset localPosition = renderBox.globalToLocal(details.globalPosition);
 
-    if (localPosition.dy <= 550) {
+    if (localPosition.dy <= canvasHeight) {
       stroke.add(
         DrawingPoint(
           offset: renderBox.globalToLocal(details.globalPosition),
@@ -86,7 +82,7 @@ class DrawingViewModel extends ChangeNotifier {
     if (selectedImage != null) {
       final paint = Paint();
       final src = Rect.fromLTWH(0, 0, selectedImage!.width.toDouble(), selectedImage!.height.toDouble());
-      final dst = Rect.fromLTWH(0, 0, constraints.maxWidth, constraints.maxHeight);
+      final dst = Rect.fromLTWH(0, 0, constraints.maxWidth, canvasHeight);
 
       canvas.drawImageRect(selectedImage!, src, dst, paint);
     }
@@ -103,7 +99,7 @@ class DrawingViewModel extends ChangeNotifier {
 
     final picture = pictureRecorder.endRecording();
 
-    final image = await picture.toImage(ssW(context).toInt(), ssH(context).toInt());
+    final image = await picture.toImage(ssW(context).toInt(), canvasHeight.toInt());
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     final buffer = byteData!.buffer.asUint8List();
 

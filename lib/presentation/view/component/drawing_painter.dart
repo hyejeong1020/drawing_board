@@ -1,4 +1,3 @@
-import 'package:drawing_board/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
@@ -14,15 +13,16 @@ class DrawingPainter extends CustomPainter {
   final List<DrawingPoint?> strokes;
   final ui.Image? backgroundImage;
   final BoxConstraints constraints;
+  final double canvasHeight;
 
-  DrawingPainter(this.backgroundImage, {super.repaint, required this.strokes, required this.constraints});
+  DrawingPainter(this.backgroundImage, {super.repaint, required this.strokes, required this.constraints, required this.canvasHeight});
 
   @override
   void paint(Canvas canvas, Size size) {
     if (backgroundImage != null) {
       final paint = Paint();
       final src = Rect.fromLTWH(0, 0, backgroundImage!.width.toDouble(), backgroundImage!.height.toDouble());
-      final dst = Rect.fromLTWH(0, 0, constraints.maxWidth, 550);
+      final dst = Rect.fromLTWH(0, 0, constraints.maxWidth, canvasHeight);
 
       canvas.drawImageRect(backgroundImage!, src, dst, paint);
     }
